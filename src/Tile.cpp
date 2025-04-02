@@ -10,6 +10,16 @@
 #include <cstdlib>
 #include <cmath>
 #include <sstream>
-class tiles {
-	
+#include <random>
+#include <ctime>
+#include <chrono>
+#include <thread>
+#include <set>
+class Tiles {
+public:
+    Tiles(bool bomb, bool show, int prox, bool flag) : bomb(bomb), show(show), prox(prox), flag(flag){}
+    bool show;
+    bool bomb;
+    int prox;
+    bool flag;
 };

@@ -10,20 +10,35 @@
 #include <cmath>
 #include <sstream>
 #include <random>
+#include <ctime>
+#include <chrono>
+#include <thread>
+#include <set>
+#include "Tile.h"
 
+
+
+
+
+
+
+
+
+
+//Set Random cordinates for mines.
 std::vector<std::vector<int>> randomizer(int sizeX, int sizeY, int numMines) {
     std::vector<std::vector<int>> output;
-    output.resize(sizeX);
-    for (int i = 0; i < numMines; i++) {
-        
-        int xvar = rand() % sizeX;
-        output[i].push_back(xvar);
-        int yvar = rand() % sizeY;
-        output[i].push_back(yvar);
+    output.resize(numMines);
+    std::cout << '\n';
+    srand(time(0));
+    for (int t = 0; t < numMines; t++) {
+        int x = rand() % sizeX;
+        int y = rand() % sizeY;
+        output[t].push_back(x);
+        output[t].push_back(y);
+        std::cout << output[t][0] << ", " << output[t][1] << '\n';
     }
-    std::cout << "here";
     return output;
-
 }
 
 
@@ -42,14 +57,8 @@ std::vector<int> loadFile(std::string filePath) {
     std::vector<int> mineMine;
 
     mineMine.push_back(std::stoi(lines[0]));
-    std::cout << lines[0] << '\n';
     mineMine.push_back(std::stoi(lines[1]));
-    std::cout << lines[1] << '\n';
     mineMine.push_back(std::stoi(lines[2]));
-    std::cout << lines[2] << '\n';
-    std::cout << mineMine[0];
-    std::cout << mineMine[1];
-    std::cout << mineMine[2];
     return mineMine;
 
 }
@@ -81,11 +90,46 @@ std::vector<std::vector<int>> boardReader(std::string filePath) {
 
 int main()
 {
+    std::vector<std::vector<int>> startingState;
     int gridX;
     int gridY;
     int mines;
     std::vector<int> randomConfig;
+    std::string gameOn = "game";
     randomConfig = loadFile("../resource/config.cfg");
+    
+    gridX = randomConfig[0];
+    gridY = randomConfig[1];
+    mines = randomConfig[2];
+    
+    
+    
+    
+    std::vector<std::vector<Tiles>> board;
+    board.resize(gridX);
+    startingState = randomizer(gridX, gridY, mines);
+    for (int f = 0; f < gridX; f++) {
+        for (int j = 0; j < gridY; j++) {
+            
+            bool show = false;
+            int prox = 0;
+            bool flag = false;
+            
+
+            //Iterates through the randomized minefield to set the tiles actively to true if its a mine or false if not.
+            
+            bool boomBoom = false;
+            for (int n = 0; n < mines; n++) {
+                if ((f == startingState[n][0]) && (j == startingState[n][1])) {
+                    boomBoom = true;
+
+                }
+                
+            }
+            Tiles tile(boomBoom, show, prox, flag);
+            board[f].push_back(tile);
+        }
+    }
     std::vector<std::vector<int>> testBoard1;
     testBoard1 = boardReader("../resource/testboard1.brd");
     std::vector<std::vector<int>> testBoard2;
@@ -96,31 +140,71 @@ int main()
     lotsOMines = boardReader("../resource/lots_o_mines.brd");
     std::vector<std::vector<int>> recursionTest;
     recursionTest = boardReader("../resource/recursion_test.brd");
- 
-    std::vector<std::vector<int>> startingState;
-    //gridX = randomConfig[0];
-    //gridY = randomConfig[1];
-    //mines = randomConfig[2];
-    //startingState = randomizer(gridX, gridY, mines);
-    //for (int p = 0; p < startingState.size(); p++) {
-    //    std::cout << startingState[p][0];
-    //   std::cout << startingState[p][1];
-//  }
-    
-    
-    
     /*
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
+    sf::Texture debug("debug.png");
+    sf::Texture digits("digits.png");
+    sf::Texture win("face_win.png");
+    sf::Texture lose ("face_lose.png");
+    sf::Texture reset("face_happy.png");
+    sf::Texture win("face_happy.png");
+    sf::Texture flag("flag.png");
+    sf::Texture mineMineMine("mine.png");
+    sf::Texture number_1("number_1.png");
+    sf::Texture number_2("number_2.png");
+    sf::Texture number_3("number_3.png");
+    sf::Texture number_4("number_4.png");
+    sf::Texture number_5("number_5.png");
+    sf::Texture number_6("number_6.png");
+    sf::Texture number_7("number_7.png");
+    sf::Texture number_8("number_8.png");
+    sf::Texture test_1("test_1.png");
+    sf::Texture test_2("test_2.png");
+    sf::Texture test_3("test_3.png");
+    sf::Texture notShown("tile_hidden.png");
+    sf::Texture Shown("tile_revealed.png");
+    */
+    
+    auto window = sf::RenderWindow(sf::VideoMode({800u, 800u}), "CMake SFML Project");
     window.setFramerateLimit(144);
-
+    std::cout << '\n';
     while (window.isOpen())
     {
         
         
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
+            sf::Vector2i localPosition = sf::Mouse::getPosition(window); // window is a sf::Window
+            std::cout << localPosition.y << '\n';
+            if (gameOn == "game") {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                if (localPosition.y <= 600) {
+
+                }
+                else {
+
+                }
+                // left mouse button is pressed: shoot
+                
+                
+            }
+        }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+        {
+
+            // left mouse button is pressed: shoot
+            sf::Vector2i localPosition = sf::Mouse::getPosition(window); // window is a sf::Window
+            std::cout << localPosition.y << '\n';
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            if (gameOn == "game") {
+                
+            }
+        }
         
-        
-        
-        
+        for (int h = 0; h < gridX; h++) {
+            for (int g = 0; g < gridY; g++) {
+
+            }
+        }
         
         
         
@@ -131,23 +215,19 @@ int main()
             {
                 window.close();
             }
+
         }
 
 
 
 
         window.clear();
-        sf::CircleShape shape(495.f);
-        shape.setFillColor(sf::Color(150, 50, 250));
 
         // set a 10-pixel wide orange outline
-        shape.setOutlineThickness(10.f);
-        shape.setOutlineColor(sf::Color(250, 150, 100));
-        window.draw(shape);
         window.display();
         
     }
-    */
+    
     
 }
 
